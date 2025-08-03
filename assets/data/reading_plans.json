@@ -1,0 +1,183 @@
+{
+  "planos": [
+    {
+      "id": "pl1",
+      "titulo": "Bíblia em 1 Ano",
+      "descricao": "Leia a Bíblia completa em 365 dias, com passagens do Antigo e Novo Testamento todos os dias.",
+      "duracao_dias": 365,
+      "categoria": "Completo",
+      "dificuldade": "Médio",
+      "imagem_capa": "assets/images/reading_plans/biblia_1_ano.jpg",
+      "dias": [
+        {
+          "dia": 1,
+          "leituras": [
+            {"livro": "Gênesis", "capitulo": 1},
+            {"livro": "Gênesis", "capitulo": 2},
+            {"livro": "Salmos", "capitulo": 1},
+            {"livro": "Mateus", "capitulo": 1}
+          ],
+          "reflexao": "No princípio... Hoje começamos a jornada com os primeiros relatos da criação e do nascimento de Jesus."
+        },
+        {
+          "dia": 2,
+          "leituras": [
+            {"livro": "Gênesis", "capitulo": 3},
+            {"livro": "Gênesis", "capitulo": 4},
+            {"livro": "Salmos", "capitulo": 2},
+            {"livro": "Mateus", "capitulo": 2}
+          ],
+          "reflexao": "A queda da humanidade e a promessa de redenção começam a se desenrolar."
+        },
+        {
+          "dia": 3,
+          "leituras": [
+            {"livro": "Gênesis", "capitulo": 5},
+            {"livro": "Gênesis", "capitulo": 6},
+            {"livro": "Salmos", "capitulo": 3},
+            {"livro": "Mateus", "capitulo": 3}
+          ],
+          "reflexao": "Deus chama Noé enquanto João Batista prepara o caminho para Jesus."
+        }
+      ]
+    },
+    {
+      "id": "pl2",
+      "titulo": "Novo Testamento em 90 Dias",
+      "descricao": "Foco na leitura do Novo Testamento completo em apenas 3 meses.",
+      "duracao_dias": 90,
+      "categoria": "Novo Testamento",
+      "dificuldade": "Fácil",
+      "imagem_capa": "assets/images/reading_plans/novo_testamento_90.jpg",
+      "dias": [
+        {
+          "dia": 1,
+          "leituras": [
+            {"livro": "Mateus", "capitulo": 1},
+            {"livro": "Mateus", "capitulo": 2},
+            {"livro": "Mateus", "capitulo": 3}
+          ],
+          "reflexao": "Iniciamos nossa jornada pelo Novo Testamento com a genealogia de Jesus, seu nascimento e o ministério de João Batista."
+        },
+        {
+          "dia": 2,
+          "leituras": [
+            {"livro": "Mateus", "capitulo": 4},
+            {"livro": "Mateus", "capitulo": 5},
+            {"livro": "Mateus", "capitulo": 6}
+          ],
+          "reflexao": "Jesus começa seu ministério público e apresenta o Sermão da Montanha, ensinando princípios fundamentais do Reino de Deus."
+        },
+        {
+          "dia": 3,
+          "leituras": [
+            {"livro": "Mateus", "capitulo": 7},
+            {"livro": "Mateus", "capitulo": 8},
+            {"livro": "Mateus", "capitulo": 9}
+          ],
+          "reflexao": "Jesus conclui seu sermão e demonstra seu poder através de diversos milagres."
+        }
+      ]
+    },
+    {
+      "id": "pl3",
+      "titulo": "21 Dias nos Salmos",
+      "descricao": "Uma imersão nos Salmos mais inspiradores e consoladores.",
+      "duracao_dias": 21,
+      "categoria": "Devocional",
+      "dificuldade": "Iniciante",
+      "imagem_capa": "assets/images/reading_plans/21_dias_salmos.jpg",
+      "dias": [
+        {
+          "dia": 1,
+          "leituras": [
+            {"livro": "Salmos", "capitulo": 1}
+          ],
+          "reflexao": "O Salmo 1 contrasta o caminho do justo com o do ímpio. Reflita sobre suas escolhas diárias."
+        },
+        {
+          "dia": 2,
+          "leituras": [
+            {"livro": "Salmos", "capitulo": 23}
+          ],
+          "reflexao": "O famoso Salmo do Pastor nos lembra do cuidado constante de Deus em todas as circunstâncias da vida."
+        },
+        {
+          "dia": 3,
+          "leituras": [
+            {"livro": "Salmos", "capitulo": 46}
+          ],
+          "reflexao": "Mesmo em meio às maiores turbulências, Deus é nosso refúgio e fortaleza."
+        }
+      ]
+    },
+    {
+      "id": "pl4",
+      "titulo": "Vida de Jesus",
+      "descricao": "Acompanhe a vida de Jesus através dos quatro evangelhos de forma cronológica.",
+      "duracao_dias": 40,
+      "categoria": "Tópico",
+      "dificuldade": "Médio",
+      "imagem_capa": "assets/images/reading_plans/vida_jesus.jpg",
+      "dias": [
+        {
+          "dia": 1,
+          "leituras": [
+            {"livro": "Lucas", "capitulo": 1, "versiculos": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]},
+            {"livro": "João", "capitulo": 1, "versiculos": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]}
+          ],
+          "reflexao": "Começamos com os prólogos de Lucas e João, que oferecem diferentes perspectivas sobre quem é Jesus."
+        }
+      ]
+    }
+  ],
+  "categorias_planos": [
+    {
+      "id": "completo",
+      "nome": "Bíblia Completa",
+      "descricao": "Planos que abrangem toda a Bíblia"
+    },
+    {
+      "id": "novo_testamento",
+      "nome": "Novo Testamento",
+      "descricao": "Planos focados no Novo Testamento"
+    },
+    {
+      "id": "devocional",
+      "nome": "Devocional",
+      "descricao": "Planos curtos para reflexão diária"
+    },
+    {
+      "id": "topico",
+      "nome": "Temático",
+      "descricao": "Planos organizados por temas específicos"
+    }
+  ],
+  "niveis_dificuldade": [
+    {
+      "id": "iniciante",
+      "nome": "Iniciante",
+      "descricao": "1-2 capítulos por dia, ideal para quem está começando"
+    },
+    {
+      "id": "facil",
+      "nome": "Fácil",
+      "descricao": "2-3 capítulos por dia, adequado para leitores regulares"
+    },
+    {
+      "id": "medio",
+      "nome": "Médio",
+      "descricao": "3-5 capítulos por dia, para leitores consistentes"
+    },
+    {
+      "id": "avancado",
+      "nome": "Avançado",
+      "descricao": "Mais de 5 capítulos por dia, para leitores experientes"
+    }
+  ],
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_planos": "1.0.0",
+    "quantidade_planos": 4
+  }
+}

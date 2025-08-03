@@ -1,0 +1,101 @@
+{
+  "referencias": [
+    {
+      "origem": {
+        "livro": "João",
+        "capitulo": 3,
+        "versiculo": 16
+      },
+      "destinos": [
+        {"livro": "Romanos", "capitulo": 5, "versiculo": 8},
+        {"livro": "1 João", "capitulo": 4, "versiculo": 9},
+        {"livro": "Efésios", "capitulo": 2, "versiculo": 4}
+      ],
+      "tipo": "teologica"
+    },
+    {
+      "origem": {
+        "livro": "Gênesis",
+        "capitulo": 1,
+        "versiculo": 1
+      },
+      "destinos": [
+        {"livro": "João", "capitulo": 1, "versiculo": 1},
+        {"livro": "Hebreus", "capitulo": 11, "versiculo": 3},
+        {"livro": "Salmos", "capitulo": 33, "versiculo": 6}
+      ],
+      "tipo": "doutrina_criacao"
+    },
+    {
+      "origem": {
+        "livro": "Salmos",
+        "capitulo": 23,
+        "versiculo": 1
+      },
+      "destinos": [
+        {"livro": "João", "capitulo": 10, "versiculo": 11},
+        {"livro": "1 Pedro", "capitulo": 5, "versiculo": 4},
+        {"livro": "Hebreus", "capitulo": 13, "versiculo": 20}
+      ],
+      "tipo": "mesianica"
+    },
+    {
+      "origem": {
+        "livro": "Mateus",
+        "capitulo": 28,
+        "versiculo": 19
+      },
+      "destinos": [
+        {"livro": "Marcos", "capitulo": 16, "versiculo": 15},
+        {"livro": "Lucas", "capitulo": 24, "versiculo": 47},
+        {"livro": "Atos", "capitulo": 1, "versiculo": 8}
+      ],
+      "tipo": "paralelo_evangelhos"
+    },
+    {
+      "origem": {
+        "livro": "Isaías",
+        "capitulo": 53,
+        "versiculo": 5
+      },
+      "destinos": [
+        {"livro": "1 Pedro", "capitulo": 2, "versiculo": 24},
+        {"livro": "Mateus", "capitulo": 8, "versiculo": 17},
+        {"livro": "Romanos", "capitulo": 4, "versiculo": 25}
+      ],
+      "tipo": "profecia_cumprida"
+    }
+  ],
+  "tipos_referencia": [
+    {
+      "id": "teologica",
+      "nome": "Referência Teológica",
+      "descricao": "Conexão baseada em conceitos teológicos semelhantes"
+    },
+    {
+      "id": "doutrina_criacao",
+      "nome": "Doutrina da Criação",
+      "descricao": "Passagens relacionadas à criação do mundo"
+    },
+    {
+      "id": "mesianica",
+      "nome": "Profecia Messiânica",
+      "descricao": "Passagens que apontam para o Messias"
+    },
+    {
+      "id": "paralelo_evangelhos",
+      "nome": "Paralelo nos Evangelhos",
+      "descricao": "Eventos ou ensinamentos comuns entre os evangelhos"
+    },
+    {
+      "id": "profecia_cumprida",
+      "nome": "Profecia e Cumprimento",
+      "descricao": "Profecias do Antigo Testamento cumpridas no Novo"
+    }
+  ],
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_dados": "1.0.0",
+    "quantidade_referencias": 5
+  }
+}

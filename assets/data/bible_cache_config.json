@@ -1,0 +1,25 @@
+{
+  "cache_strategy": {
+    "max_age_days": 30,
+    "priority_books": ["João", "Salmos", "Gênesis", "Romanos", "Mateus"],
+    "download_on_wifi_only": false,
+    "auto_cleanup_threshold_mb": 50
+  },
+  "sync_settings": {
+    "sync_bookmarks": true,
+    "sync_notes": true,
+    "sync_reading_progress": true,
+    "sync_reading_plans": true,
+    "background_sync_interval_hours": 24
+  },
+  "offline_mode": {
+    "enable_automatic_downloads": true,
+    "download_chapters_ahead": 3,
+    "preferred_versions": ["arc", "nvi"],
+    "store_read_chapters": true
+  },
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_config": "1.0.0"
+  }
+}

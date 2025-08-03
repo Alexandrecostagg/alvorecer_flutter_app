@@ -1,0 +1,95 @@
+.
+├── alvorecer_flutter_app.iml
+├── analysis_options.yaml
+├── assets
+│   ├── audio
+│   ├── data
+│   │   ├── bible
+│   │   ├── bible_books.json
+│   │   ├── bible_cache_config.json
+│   │   ├── bible_dictionary.json
+│   │   ├── bible_themes.json
+│   │   ├── bookmarks_notes.json
+│   │   ├── cross_references.json
+│   │   ├── reading_plans.json
+│   │   └── search_index.json
+│   ├── icons
+│   └── images
+│       └── alvorecer_logo.png
+├── estrutura_projeto_atual.txt
+├── estrutura_projeto.txt
+├── lib
+│   ├── app.dart
+│   ├── bible_app.dart
+│   ├── firebase_options.dart
+│   ├── glorify_bible_view.dart
+│   ├── main.dart
+│   ├── models
+│   │   ├── bible_mark.dart
+│   │   ├── bible_verse.dart
+│   │   ├── book.dart
+│   │   ├── user_model.dart
+│   │   ├── user_settings.dart
+│   │   └── verse.dart
+│   ├── screens
+│   │   ├── bible_screen.dart
+│   │   ├── bible_screen.dart.bak
+│   │   ├── bible_search_screen.dar
+│   │   ├── bible_search_screen.dart
+│   │   ├── bible_test_screen.dart
+│   │   ├── community_screen.dart
+│   │   ├── complete_profile_screen.dart
+│   │   ├── devotional_screen.dart
+│   │   ├── forgot_password_screen.dart
+│   │   ├── home_screen.dart
+│   │   ├── login_screen.dart
+│   │   ├── marks_screen.dart
+│   │   ├── profile_screen.dart
+│   │   ├── register_screen.dart
+│   │   ├── shop_screen.dart
+│   │   └── splash_screen.dart
+│   ├── services
+│   │   ├── auth_service.dart
+│   │   ├── bible_marks_service.dart
+│   │   ├── bible_search_service.dart
+│   │   ├── bible_service.dart
+│   │   ├── bible_version_service.dart
+│   │   ├── BibleCacheManager.js
+│   │   └── favorites_service.dart
+│   ├── theme
+│   │   ├── alvorecer_theme.dart
+│   │   └── app_theme.dart
+│   ├── utils
+│   │   ├── form_validators.dart
+│   │   └── generate_nvi_bible.dart
+│   └── widgets
+│       ├── bible_reader.dart
+│       ├── bible_version_selector.dart
+│       ├── custom_text_field.dart 
+│       ├── devotional_card.dart
+│       ├── favorite_button.dart
+│       ├── progress_card.dart
+│       ├── progress_card.dart 
+│       ├── quick_access_grid.dart
+│       ├── social_login_button.dart
+│       └── verse_comparison_widget.dart
+├── pubspec.lock
+├── pubspec.yaml
+├── README.md
+├── test
+│   ├── bible_test.dart
+│   └── widget_test.dart
+└── web
+    ├── BibleCacheManager.js
+    ├── BibleManager.js
+    ├── favicon.png
+    ├── icons
+    │   ├── Icon-192.png
+    │   ├── Icon-512.png
+    │   ├── Icon-maskable-192.png
+    │   └── Icon-maskable-512.png
+    ├── index.html
+    ├── js_or_arquivos_davi.js
+    └── manifest.json
+
+17 directories, 76 files

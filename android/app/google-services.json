@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "524745924262",
+    "project_id": "alvorecerflutterapp",
+    "storage_bucket": "alvorecerflutterapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524745924262:android:fbce7617f427f10ffc9e67",
+        "android_client_info": {
+          "package_name": "com.example.alvorecer_flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524745924262-thn3kikm5av6pg80q5grl3768ci3kj6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuLiqf0bgjJ4PGjcnMRcbnWbXhqowgTHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524745924262-thn3kikm5av6pg80q5grl3768ci3kj6r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "524745924262-2653gj6gh542dh227ma41tquq3f8md34.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.alvorecerFlutterApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

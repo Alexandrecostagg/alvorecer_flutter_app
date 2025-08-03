@@ -1,0 +1,107 @@
+{
+  "temas": [
+    {
+      "id": "padrao",
+      "nome": "Tema Padrão",
+      "cores": {
+        "primaria": "#3F51B5",
+        "secundaria": "#303F9F",
+        "acento": "#FF4081",
+        "texto_primario": "#212121",
+        "texto_secundario": "#757575",
+        "fundo": "#FFFFFF",
+        "fundo_secundario": "#F5F5F5",
+        "versiculo_destacado": "#E3F2FD"
+      },
+      "fontes": {
+        "familia_titulo": "Roboto",
+        "familia_texto": "Roboto",
+        "tamanho_base": 16,
+        "peso_titulo": 500,
+        "peso_texto": 400,
+        "escala_titulos": 1.25
+      }
+    },
+    {
+      "id": "noturno",
+      "nome": "Modo Noturno",
+      "cores": {
+        "primaria": "#263238",
+        "secundaria": "#37474F",
+        "acento": "#FF9800",
+        "texto_primario": "#ECEFF1",
+        "texto_secundario": "#B0BEC5",
+        "fundo": "#121212",
+        "fundo_secundario": "#1E1E1E",
+        "versiculo_destacado": "#1A237E"
+      },
+      "fontes": {
+        "familia_titulo": "Roboto",
+        "familia_texto": "Roboto",
+        "tamanho_base": 16,
+        "peso_titulo": 500,
+        "peso_texto": 400,
+        "escala_titulos": 1.25
+      }
+    },
+    {
+      "id": "sepia",
+      "nome": "Modo Sepia",
+      "cores": {
+        "primaria": "#795548",
+        "secundaria": "#5D4037",
+        "acento": "#009688",
+        "texto_primario": "#3E2723",
+        "texto_secundario": "#6D4C41",
+        "fundo": "#F5F5DC",
+        "fundo_secundario": "#EFEBE9",
+        "versiculo_destacado": "#D7CCC8"
+      },
+      "fontes": {
+        "familia_titulo": "Roboto Slab",
+        "familia_texto": "Roboto Slab",
+        "tamanho_base": 16,
+        "peso_titulo": 500,
+        "peso_texto": 400,
+        "escala_titulos": 1.25
+      }
+    },
+    {
+      "id": "contraste_alto",
+      "nome": "Alto Contraste",
+      "cores": {
+        "primaria": "#000000",
+        "secundaria": "#333333",
+        "acento": "#FFFF00",
+        "texto_primario": "#FFFFFF",
+        "texto_secundario": "#CCCCCC",
+        "fundo": "#000000",
+        "fundo_secundario": "#222222",
+        "versiculo_destacado": "#444444"
+      },
+      "fontes": {
+        "familia_titulo": "Arial",
+        "familia_texto": "Arial",
+        "tamanho_base": 18,
+        "peso_titulo": 700,
+        "peso_texto": 400,
+        "escala_titulos": 1.35
+      },
+      "acessibilidade": {
+        "espacamento_linhas": 1.5,
+        "espacamento_letras": 0.5,
+        "destaque_links": true
+      }
+    }
+  ],
+  "configuracoes_usuario": {
+    "permitir_ajuste_tamanho_fonte": true,
+    "tamanho_fonte_min": 12,
+    "tamanho_fonte_max": 24,
+    "permitir_ajuste_espacamento": true
+  },
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_temas": "1.0.0"
+  }
+}

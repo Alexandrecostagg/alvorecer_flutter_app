@@ -1,0 +1,907 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:async';
+
+import '../services/bible_service.dart';
+import '../services/bible_marks_service.dart';
+import '../services/auth_service.dart';
+import '../widgets/bible_reader.dart';
+
+class BibleScreen extends StatefulWidget {
+  const BibleScreen({Key? key}) : super(key: key);
+
+  @override
+  _BibleScreenState createState() => _BibleScreenState();
+}
+
+class _BibleScreenState extends State<BibleScreen> {
+  final BibleService _bibleService = BibleService();
+  
+  // Estado da tela
+  List<dynamic> books = [];
+  String currentBookId = '';
+  String currentBookName = '';
+  int currentChapter = 1;
+  List<dynamic> chapters = [];
+  List<dynamic> verses = [];
+  bool isLoading = true;
+  String errorMessage = '';
+  
+  // Controle de pesquisa
+  final TextEditingController _searchController = TextEditingController();
+  List<dynamic> searchResults = [];
+  bool isSearching = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadBooks();
+  }
+  
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+  
+  Future<void> _loadBooks() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+    
+    try {
+      final loadedBooks = await _bibleService.getBooks();
+      
+      setState(() {
+        books = loadedBooks;
+        
+        // Se é a primeira carga, começar com Gênesis 1
+        if (currentBookId.isEmpty && books.isNotEmpty) {
+          currentBookId = books[0]['id'];
+          currentBookName = books[0]['name'];
+          _loadChapters(currentBookId);
+        }
+        
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Erro ao carregar livros: ${e.toString()}';
+      });
+    }
+  }
+  
+  Future<void> _loadChapters(String bookId) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+    
+    try {
+      final book = books.firstWhere((b) => b['id'] == bookId);
+      final loadedChapters = await _bibleService.getChapters(bookId);
+      
+      setState(() {
+        chapters = loadedChapters;
+        currentBookId = bookId;
+        currentBookName = book['name'];
+        
+        // Carregar o primeiro capítulo se ainda não houver capítulo selecionado
+        if (chapters.isNotEmpty) {
+          _loadVerses(bookId, 1);
+        }
+        
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Erro ao carregar capítulos: ${e.toString()}';
+      });
+    }
+  }
+  
+  Future<void> _loadVerses(String bookId, int chapterNumber) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+    
+    try {
+      final loadedVerses = await _bibleService.getVerses(bookId, chapterNumber);
+      
+      setState(() {
+        verses = loadedVerses;
+        currentChapter = chapterNumber;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Erro ao carregar versículos: ${e.toString()}';
+      });
+    }
+  }
+  
+  Future<void> _search() async {
+    final searchTerm = _searchController.text.trim();
+    if (searchTerm.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Digite pelo menos 3 caracteres para buscar.'))
+      );
+      return;
+    }
+    
+    setState(() {
+      isSearching = true;
+      errorMessage = '';
+    });
+    
+    try {
+      final results = await _bibleService.searchBible(searchTerm);
+      
+      setState(() {
+        searchResults = results;
+        isSearching = false;
+      });
+      
+      // Mostrar resultados em bottom sheet
+      _showSearchResults();
+    } catch (e) {
+      setState(() {
+        isSearching = false;
+        errorMessage = 'Erro na busca: ${e.toString()}';
+      });
+    }
+  }
+  
+  void _showSearchResults() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Resultados da busca (${searchResults.length})',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: searchResults.isEmpty
+                        ? const Center(child: Text('Nenhum resultado encontrado.'))
+                        : ListView.builder(
+                            controller: scrollController,
+                            itemCount: searchResults.length,
+                            itemBuilder: (context, index) {
+                              final result = searchResults[index];
+                              return ListTile(
+                                title: Text('${result['book']} ${result['chapter']}:${result['verse']}'),
+                                subtitle: Text(
+                                  result['text'],
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _loadChapters(result['bookId']);
+                                  _loadVerses(result['bookId'], result['chapter']);
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  void _toggleMark(Map<String, dynamic> verse) {
+    final marksService = Provider.of<BibleMarksService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    
+    if (!authService.isLoggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Faça login para marcar versículos.'))
+      );
+      return;
+    }
+    
+    // Verificar se o versículo já está marcado
+    final existingMarks = marksService.getMarksForVerse(
+      currentBookId, 
+      currentChapter, 
+      verse['number']
+    );
+    
+    if (existingMarks.isEmpty) {
+      // Adicionar marcação
+      marksService.addMark(
+        bookId: currentBookId,
+        bookName: currentBookName,
+        chapter: currentChapter,
+        verse: verse['number'],
+        text: verse['text'],
+        color: Colors.yellow.shade200,
+        markType: 'highlight',
+      );
+    } else {
+      // Remover marcação (a primeira encontrada)
+      marksService.deleteMark(existingMarks.first.id);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final marksService = Provider.of<BibleMarksService>(context);
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bíblia - $currentBookName $currentChapter'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: BibleSearchDelegate(
+                  _bibleService,
+                  onResultSelected: (bookId, chapter) {
+                    _loadChapters(bookId);
+                    _loadVerses(bookId, chapter);
+                  },
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bookmark),
+            onPressed: () {
+              // Mostrar marcações do usuário
+              if (marksService.marks.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Você ainda não tem versículos marcados.'))
+                );
+                return;
+              }
+              
+              _showMarks(context);
+            },
+          ),
+        ],
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage.isNotEmpty
+              ? Center(child: Text('Erro: $errorMessage'))
+              : Column(
+                  children: [
+                    // Seletor de livro
+                    Container(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: books.length,
+                        itemBuilder: (context, index) {
+                          final book = books[index];
+                          final isSelected = book['id'] == currentBookId;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: ChoiceChip(
+                              label: Text(book['name']),
+                              selected: isSelected,
+                              onSelected: (_) => _loadChapters(book['id']),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    
+                    // Seletor de capítulo
+                    Container(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: chapters.length,
+                        itemBuilder: (context, index) {
+                          final chapter = chapters[index];
+                          final isSelected = chapter == currentChapter;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: ChoiceChip(
+                              label: Text('$chapter'),
+                              selected: isSelected,
+                              onSelected: (_) => _loadVerses(currentBookId, chapter),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    
+                    // Lista de versículos
+                    Expanded(
+                      child: verses.isEmpty
+                          ? Center(child: Text('Nenhum versículo encontrado.'))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: verses.length,
+                              itemBuilder: (context, index) {
+                                final verse = verses[index];
+                                
+                                // Verificar se tem marcação
+                                final verseMarks = marksService.getMarksForVerse(
+                                  currentBookId, 
+                                  currentChapter, 
+                                  verse['number']
+                                );
+                                
+                                final hasHighlight = verseMarks.any((m) => m.markType == 'highlight');
+                                final hasBookmark = verseMarks.any((m) => m.markType == 'bookmark');
+                                final hasNote = verseMarks.any((m) => m.note.isNotEmpty);
+                                
+                                Color? highlightColor;
+                                if (hasHighlight) {
+                                  highlightColor = verseMarks
+                                      .firstWhere((m) => m.markType == 'highlight', orElse: () => verseMarks.first)
+                                      .color;
+                                }
+                                
+                                return InkWell(
+                                  onLongPress: () => _showVerseOptions(verse),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 6),
+                                    color: highlightColor?.withOpacity(0.3),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 28,
+                                          child: Text(
+                                            '${verse['number']}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(verse['text']),
+                                        ),
+                                        if (hasBookmark || hasNote)
+                                          Icon(
+                                            hasBookmark ? Icons.bookmark : Icons.note,
+                                            size: 16,
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+    );
+  }
+  
+  void _showVerseOptions(Map<String, dynamic> verse) {
+    final marksService = Provider.of<BibleMarksService>(context, listen: false);
+    
+    // Verificar marcações existentes
+    final verseMarks = marksService.getMarksForVerse(
+      currentBookId, 
+      currentChapter, 
+      verse['number']
+    );
+    
+    final hasHighlight = verseMarks.any((m) => m.markType == 'highlight');
+    final hasBookmark = verseMarks.any((m) => m.markType == 'bookmark');
+    
+    BibleMark? highlightMark;
+    BibleMark? bookmarkMark;
+    BibleMark? noteMark;
+    
+    if (verseMarks.isNotEmpty) {
+      highlightMark = verseMarks.firstWhere(
+        (m) => m.markType == 'highlight', 
+        orElse: () => BibleMark(
+          id: '',
+          userId: '',
+          bookId: currentBookId,
+          bookName: currentBookName,
+          chapter: currentChapter,
+          verse: verse['number'],
+          text: verse['text'],
+          color: Colors.yellow.shade200,
+          note: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isFavorite: false,
+          markType: 'highlight',
+        ),
+      );
+      
+      bookmarkMark = verseMarks.firstWhere(
+        (m) => m.markType == 'bookmark',
+        orElse: () => BibleMark(
+          id: '',
+          userId: '',
+          bookId: currentBookId,
+          bookName: currentBookName,
+          chapter: currentChapter,
+          verse: verse['number'],
+          text: verse['text'],
+          color: Colors.blue,
+          note: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isFavorite: false,
+          markType: 'bookmark',
+        ),
+      );
+      
+      noteMark = verseMarks.firstWhere(
+        (m) => m.note.isNotEmpty,
+        orElse: () => highlightMark ?? bookmarkMark!,
+      );
+    }
+    
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('${currentBookName} ${currentChapter}:${verse['number']}'),
+                subtitle: Text(verse['text']),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.brush),
+                title: const Text('Destacar'),
+                trailing: hasHighlight ? const Icon(Icons.check) : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  
+                  if (!hasHighlight) {
+                    marksService.addMark(
+                      bookId: currentBookId,
+                      bookName: currentBookName,
+                      chapter: currentChapter,
+                      verse: verse['number'],
+                      text: verse['text'],
+                      color: Colors.yellow.shade200,
+                      markType: 'highlight',
+                    );
+                  } else {
+                    if (highlightMark!.id.isNotEmpty) {
+                      marksService.deleteMark(highlightMark.id);
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.bookmark),
+                title: const Text('Marcar'),
+                trailing: hasBookmark ? const Icon(Icons.check) : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  
+                  if (!hasBookmark) {
+                    marksService.addMark(
+                      bookId: currentBookId,
+                      bookName: currentBookName,
+                      chapter: currentChapter,
+                      verse: verse['number'],
+                      text: verse['text'],
+                      color: Colors.blue,
+                      markType: 'bookmark',
+                    );
+                  } else {
+                    if (bookmarkMark!.id.isNotEmpty) {
+                      marksService.deleteMark(bookmarkMark.id);
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.note_add),
+                title: const Text('Adicionar anotação'),
+                onTap: () {
+                  Navigator.pop(context);
+                  
+                  // Se não há marcação, criar uma
+                  if (verseMarks.isEmpty) {
+                    marksService.addMark(
+                      bookId: currentBookId,
+                      bookName: currentBookName,
+                      chapter: currentChapter,
+                      verse: verse['number'],
+                      text: verse['text'],
+                      markType: 'note',
+                    );
+                    
+                    // Recarregar para obter a marcação criada
+                    setState(() {});
+                    
+                    // Mostrar caixa de diálogo após um breve delay
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      final updatedMarks = marksService.getMarksForVerse(
+                        currentBookId, 
+                        currentChapter, 
+                        verse['number']
+                      );
+                      
+                      if (updatedMarks.isNotEmpty) {
+                        _showNoteEditor(updatedMarks.first);
+                      }
+                    });
+                  } else {
+                    // Editar nota da marcação existente
+                    _showNoteEditor(noteMark!);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text('Compartilhar'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Lógica para compartilhar
+                  final verseText = '${currentBookName} ${currentChapter}:${verse['number']} - ${verse['text']}';
+                  // Aqui você usaria um pacote como share_plus para compartilhar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Compartilhando: $verseText')),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  void _showNoteEditor(BibleMark mark) {
+    final marksService = Provider.of<BibleMarksService>(context, listen: false);
+    final noteController = TextEditingController(text: mark.note);
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Anotação - ${mark.bookName} ${mark.chapter}:${mark.verse}'),
+          content: TextField(
+            controller: noteController,
+            decoration: const InputDecoration(
+              hintText: 'Digite sua anotação aqui...',
+            ),
+            maxLines: 5,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                marksService.updateMark(
+                  markId: mark.id,
+                  note: noteController.text,
+                );
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  void _showMarks(BuildContext context) {
+    final marksService = Provider.of<BibleMarksService>(context, listen: false);
+    final allMarks = marksService.marks;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return DefaultTabController(
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('Minhas Marcações'),
+                  bottom: const TabBar(
+                    tabs: [
+                      Tab(text: 'Destaques'),
+                      Tab(text: 'Marcadores'),
+                      Tab(text: 'Anotações'),
+                    ],
+                  ),
+                ),
+                body: TabBarView(
+                  children: [
+                    // Destaques
+                    _buildMarksList(
+                      marksService.getMarksByType('highlight'),
+                      scrollController,
+                    ),
+                    
+                    // Marcadores
+                    _buildMarksList(
+                      marksService.getMarksByType('bookmark'),
+                      scrollController,
+                    ),
+                    
+                    // Anotações (marcações com notas)
+                    _buildMarksList(
+                      marksService.marks.where((m) => m.note.isNotEmpty).toList(),
+                      scrollController,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildMarksList(List<BibleMark> marks, ScrollController scrollController) {
+    if (marks.isEmpty) {
+      return const Center(child: Text('Nenhuma marcação encontrada.'));
+    }
+    
+    return ListView.builder(
+      controller: scrollController,
+      itemCount: marks.length,
+      itemBuilder: (context, index) {
+        final mark = marks[index];
+        return ListTile(
+          title: Text('${mark.bookName} ${mark.chapter}:${mark.verse}'),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(mark.text, maxLines: 2, overflow: TextOverflow.ellipsis),
+              if (mark.note.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Nota: ${mark.note}',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey[600],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
+          leading: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: mark.color.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              mark.markType == 'highlight' ? Icons.brush :
+              mark.markType == 'bookmark' ? Icons.bookmark :
+              Icons.note,
+              size: 16,
+              color: Colors.white,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            _loadChapters(mark.bookId);
+            _loadVerses(mark.bookId, mark.chapter);
+          },
+          onLongPress: () {
+            _showMarkOptions(mark);
+          },
+        );
+      },
+    );
+  }
+  
+  void _showMarkOptions(BibleMark mark) {
+    final marksService = Provider.of<BibleMarksService>(context, listen: false);
+    
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('${mark.bookName} ${mark.chapter}:${mark.verse}'),
+                subtitle: Text(mark.text),
+              ),
+              const Divider(),
+              if (mark.markType == 'highlight' || mark.note.isNotEmpty)
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text('Editar anotação'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showNoteEditor(mark);
+                  },
+                ),
+              ListTile(
+                leading: const Icon(Icons.favorite),
+                title: Text(mark.isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'),
+                onTap: () {
+                  Navigator.pop(context);
+                  marksService.updateMark(
+                    markId: mark.id,
+                    isFavorite: !mark.isFavorite,
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Excluir marcação', style: TextStyle(color: Colors.red)),
+                onTap: () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Confirmar exclusão'),
+                        content: const Text('Deseja realmente excluir esta marcação? Esta ação não pode ser desfeita.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              marksService.deleteMark(mark.id);
+                            },
+                            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Delegado de pesquisa para busca na Bíblia
+class BibleSearchDelegate extends SearchDelegate<String> {
+  final BibleService _bibleService;
+  final Function(String, int) onResultSelected;
+  List<Map<String, dynamic>> _results = [];
+  bool _isSearching = false;
+
+  BibleSearchDelegate(this._bibleService, {required this.onResultSelected});
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return _buildSearchResults(context);
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    if (query.length >= 3 && !_isSearching) {
+      _performSearch(context);
+    }
+    return _buildSearchResults(context);
+  }
+
+  Future<void> _performSearch(BuildContext context) async {
+    if (query.length < 3) return;
+
+    _isSearching = true;
+
+    try {
+      final results = await _bibleService.searchBible(query);
+      _results = List<Map<String, dynamic>>.from(results);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro na busca: ${e.toString()}')),
+      );
+    } finally {
+      _isSearching = false;
+    }
+  }
+
+  Widget _buildSearchResults(BuildContext context) {
+    if (_isSearching) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (query.length < 3) {
+      return const Center(
+        child: Text('Digite pelo menos 3 caracteres para buscar.'),
+      );
+    }
+
+    if (_results.isEmpty) {
+      return const Center(
+        child: Text('Nenhum resultado encontrado.'),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _results.length,
+      itemBuilder: (context, index) {
+        final result = _results[index];
+        return ListTile(
+          title: Text('${result['book']} ${result['chapter']}:${result['verse']}'),
+          subtitle: Text(
+            result['text'],
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () {
+            close(context, '');
+            onResultSelected(result['bookId'], result['chapter']);
+          },
+        );
+      },
+    );
+  }
+}

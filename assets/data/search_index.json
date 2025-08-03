@@ -1,0 +1,49 @@
+{
+  "versao": "arc",
+  "palavras_chave": {
+    "amor": [
+      {"livro": "João", "capitulo": 3, "versiculo": 16},
+      {"livro": "1 Coríntios", "capitulo": 13, "versiculo": 4},
+      {"livro": "1 Coríntios", "capitulo": 13, "versiculo": 5},
+      {"livro": "1 Coríntios", "capitulo": 13, "versiculo": 6},
+      {"livro": "1 Coríntios", "capitulo": 13, "versiculo": 7},
+      {"livro": "1 João", "capitulo": 4, "versiculo": 8},
+      {"livro": "1 João", "capitulo": 4, "versiculo": 16}
+    ],
+    "fé": [
+      {"livro": "Hebreus", "capitulo": 11, "versiculo": 1},
+      {"livro": "Hebreus", "capitulo": 11, "versiculo": 6},
+      {"livro": "Romanos", "capitulo": 10, "versiculo": 17},
+      {"livro": "Efésios", "capitulo": 2, "versiculo": 8},
+      {"livro": "Tiago", "capitulo": 2, "versiculo": 17}
+    ],
+    "graça": [
+      {"livro": "Efésios", "capitulo": 2, "versiculo": 8},
+      {"livro": "Romanos", "capitulo": 3, "versiculo": 24},
+      {"livro": "2 Coríntios", "capitulo": 12, "versiculo": 9},
+      {"livro": "Tito", "capitulo": 2, "versiculo": 11}
+    ],
+    "salvação": [
+      {"livro": "João", "capitulo": 3, "versiculo": 16},
+      {"livro": "Atos", "capitulo": 4, "versiculo": 12},
+      {"livro": "Efésios", "capitulo": 2, "versiculo": 8},
+      {"livro": "Romanos", "capitulo": 10, "versiculo": 9}
+    ],
+    "oração": [
+      {"livro": "Filipenses", "capitulo": 4, "versiculo": 6},
+      {"livro": "1 Tessalonicenses", "capitulo": 5, "versiculo": 17},
+      {"livro": "Tiago", "capitulo": 5, "versiculo": 16},
+      {"livro": "Mateus", "capitulo": 6, "versiculo": 9},
+      {"livro": "Mateus", "capitulo": 6, "versiculo": 10},
+      {"livro": "Mateus", "capitulo": 6, "versiculo": 11},
+      {"livro": "Mateus", "capitulo": 6, "versiculo": 12},
+      {"livro": "Mateus", "capitulo": 6, "versiculo": 13}
+    ]
+  },
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_indice": "1.0.0",
+    "quantidade_palavras": 5,
+    "quantidade_referencias": 27
+  }
+}

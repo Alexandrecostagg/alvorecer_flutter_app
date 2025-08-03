@@ -1,0 +1,99 @@
+{
+  "termos": [
+    {
+      "termo": "Graça",
+      "definicao": "Favor imerecido de Deus; bondade divina concedida gratuitamente aos seres humanos.",
+      "referencias_chave": [
+        {"livro": "Efésios", "capitulo": 2, "versiculo": 8},
+        {"livro": "Romanos", "capitulo": 3, "versiculo": 24},
+        {"livro": "2 Coríntios", "capitulo": 12, "versiculo": 9}
+      ]
+    },
+    {
+      "termo": "Justificação",
+      "definicao": "Ato pelo qual Deus declara o pecador como justo com base na fé em Jesus Cristo.",
+      "referencias_chave": [
+        {"livro": "Romanos", "capitulo": 5, "versiculo": 1},
+        {"livro": "Gálatas", "capitulo": 2, "versiculo": 16},
+        {"livro": "Romanos", "capitulo": 3, "versiculo": 28}
+      ]
+    },
+    {
+      "termo": "Fé",
+      "definicao": "Confiança e crença em Deus e em Sua Palavra; certeza nas coisas que se esperam e convicção nas que não se veem.",
+      "referencias_chave": [
+        {"livro": "Hebreus", "capitulo": 11, "versiculo": 1},
+        {"livro": "Hebreus", "capitulo": 11, "versiculo": 6},
+        {"livro": "Romanos", "capitulo": 10, "versiculo": 17}
+      ]
+    },
+    {
+      "termo": "Salvação",
+      "definicao": "Libertação do pecado e suas consequências através da obra redentora de Jesus Cristo.",
+      "referencias_chave": [
+        {"livro": "Efésios", "capitulo": 2, "versiculo": 8},
+        {"livro": "João", "capitulo": 3, "versiculo": 16},
+        {"livro": "Romanos", "capitulo": 10, "versiculo": 9}
+      ]
+    },
+    {
+      "termo": "Reino de Deus",
+      "definicao": "O domínio soberano de Deus, tanto presente quanto futuro, onde Sua vontade é realizada perfeitamente.",
+      "referencias_chave": [
+        {"livro": "Mateus", "capitulo": 6, "versiculo": 33},
+        {"livro": "Lucas", "capitulo": 17, "versiculo": 21},
+        {"livro": "João", "capitulo": 18, "versiculo": 36}
+      ]
+    },
+    {
+      "termo": "Espírito Santo",
+      "definicao": "A terceira pessoa da Trindade; Deus presente no mundo para convencer, regenerar, habitar e capacitar os crentes.",
+      "referencias_chave": [
+        {"livro": "João", "capitulo": 16, "versiculo": 7},
+        {"livro": "Atos", "capitulo": 1, "versiculo": 8},
+        {"livro": "Romanos", "capitulo": 8, "versiculo": 26}
+      ]
+    },
+    {
+      "termo": "Arrependimento",
+      "definicao": "Mudança de mente e de direção; abandonar o pecado e voltar-se para Deus.",
+      "referencias_chave": [
+        {"livro": "Atos", "capitulo": 3, "versiculo": 19},
+        {"livro": "Lucas", "capitulo": 13, "versiculo": 3},
+        {"livro": "2 Coríntios", "capitulo": 7, "versiculo": 10}
+      ]
+    },
+    {
+      "termo": "Evangelho",
+      "definicao": "Boas-novas sobre Jesus Cristo e a salvação disponível através dele.",
+      "referencias_chave": [
+        {"livro": "Romanos", "capitulo": 1, "versiculo": 16},
+        {"livro": "1 Coríntios", "capitulo": 15, "versiculos": [1, 2, 3, 4]},
+        {"livro": "Marcos", "capitulo": 1, "versiculo": 15}
+      ]
+    },
+    {
+      "termo": "Redenção",
+      "definicao": "Libertação por meio de pagamento de resgate; Cristo redimiu os pecadores pela sua morte.",
+      "referencias_chave": [
+        {"livro": "Efésios", "capitulo": 1, "versiculo": 7},
+        {"livro": "Colossenses", "capitulo": 1, "versiculo": 14},
+        {"livro": "Hebreus", "capitulo": 9, "versiculo": 12}
+      ]
+    },
+    {
+      "termo": "Propiciação",
+      "definicao": "Satisfação da justiça divina pela morte de Cristo, aplacando a ira de Deus contra o pecado.",
+      "referencias_chave": [
+        {"livro": "Romanos", "capitulo": 3, "versiculo": 25},
+        {"livro": "Hebreus", "capitulo": 2, "versiculo": 17},
+        {"livro": "1 João", "capitulo": 2, "versiculo": 2}
+      ]
+    }
+  ],
+  "meta": {
+    "ultima_atualizacao": "2025-07-26",
+    "versao_dicionario": "1.0.0",
+    "quantidade_termos": 10
+  }
+}

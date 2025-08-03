@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="App Alvorecer">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="alvorecer_app">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Alvorecer App</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+
+  <!-- CARREGAMENTO DOS DADOS BÍBLICOS PRIMEIRO -->
+  <script src="js_or_arquivos_davi.js"></script>
+  
+  <!-- Carregando script do módulo da Bíblia DEPOIS DOS DADOS -->
+  <script src="BibleManager.js"></script>
+
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js"></script>
+  
+  <script>
+    // Configuração de debug para visualizar erros JavaScript
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('Erro JavaScript:', message, 'em', source, 'linha', lineno);
+      document.getElementById('loading-error').textContent = message;
+      document.getElementById('loading-error').style.display = 'block';
+      return false;
+    };
+
+    // Funções globais para comunicação com Flutter
+    function getBibleBooks() {
+      try {
+        if (typeof BibliaData !== 'undefined') {
+          return JSON.stringify(Object.keys(BibliaData.dados));
+        }
+        return JSON.stringify(['genesis']);
+      } catch (e) {
+        console.error('Erro em getBibleBooks:', e);
+        return JSON.stringify([]);
+      }
+    }
+
+    function getBibleChapters(book) {
+      try {
+        if (typeof BibliaData !== 'undefined' && BibliaData.dados[book.toLowerCase()]) {
+          return JSON.stringify(Object.keys(BibliaData.dados[book.toLowerCase()]).map(Number));
+        }
+        return JSON.stringify([1, 2, 3, 4, 5]);
+      } catch (e) {
+        console.error('Erro em getBibleChapters:', e);
+        return JSON.stringify([]);
+      }
+    }
+
+    function getBibleVerses(book, chapter) {
+      try {
+        if (typeof window.bibleManager !== 'undefined') {
+          return window.bibleManager.loadChapter(book, chapter)
+            .then(data => JSON.stringify(data))
+            .catch(error => {
+              console.error('Erro ao carregar capítulo:', error);
+              return JSON.stringify({
+                book: book,
+                chapter: parseInt(chapter),
+                verses: {},
+                version: 'Almeida Revista e Corrigida',
+                error: error.message
+              });
+            });
+        }
+        
+        // Fallback com dados estáticos
+        const staticData = {
+          book: book,
+          chapter: parseInt(chapter),
+          verses: {
+            1: "Este é o livro das gerações de Adão. No dia em que Deus criou o homem, à semelhança de Deus o fez.",
+            2: "Homem e mulher os criou; e os abençoou e chamou o seu nome Adão, no dia em que foram criados."
+          },
+          version: 'Almeida Revista e Corrigida'
+        };
+        
+        return Promise.resolve(JSON.stringify(staticData));
+      } catch (e) {
+        console.error('Erro em getBibleVerses:', e);
+        return Promise.resolve(JSON.stringify({
+          book: book,
+          chapter: parseInt(chapter),
+          verses: {},
+          version: 'Almeida Revista e Corrigida',
+          error: e.message
+        }));
+      }
+    }
+
+    function searchBible(query) {
+      try {
+        if (typeof window.bibleManager !== 'undefined') {
+          return window.bibleManager.searchVerses(query)
+            .then(results => JSON.stringify(results))
+            .catch(error => {
+              console.error('Erro na busca:', error);
+              return JSON.stringify([]);
+            });
+        }
+        
+        // Fallback de busca
+        return Promise.resolve(JSON.stringify([]));
+      } catch (e) {
+        console.error('Erro em searchBible:', e);
+        return Promise.resolve(JSON.stringify([]));
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM carregado, verificando BibleManager...');
+      
+      // Aguardar um pouco para os scripts carregarem
+      setTimeout(() => {
+        // Verificar se o BibliaData está disponível
+        if (typeof BibliaData !== 'undefined') {
+          console.log('✅ BibliaData está disponível!');
+        } else {
+          console.error('❌ BibliaData não está disponível!');
+        }
+        
+        // Verificar se o BibleManager está disponível
+        if (typeof window.bibleManager !== 'undefined') {
+          console.log('✅ BibleManager está disponível!');
+          // Inicializar o BibleManager
+          window.bibleManager.initialize().then(success => {
+            if (success) {
+              console.log('✅ BibleManager inicializado com sucesso!');
+            } else {
+              console.error('❌ Falha ao inicializar BibleManager');
+            }
+          });
+        } else {
+          console.error('❌ BibleManager não está disponível!');
+        }
+        
+        // Teste adicional para verificar as funções globais
+        console.log('🔍 Verificando funções globais:');
+        console.log('- getBibleBooks:', typeof getBibleBooks === 'function');
+        console.log('- getBibleChapters:', typeof getBibleChapters === 'function');
+        console.log('- getBibleVerses:', typeof getBibleVerses === 'function');
+        console.log('- searchBible:', typeof searchBible === 'function');
+      }, 100);
+    });
+
+    // Tornar as funções globalmente acessíveis
+    window.getBibleBooks = getBibleBooks;
+    window.getBibleChapters = getBibleChapters;
+    window.getBibleVerses = getBibleVerses;
+    window.searchBible = searchBible;
+  </script>
+</head>
+<body>
+  <div id="loading" style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif;">
+    <img src="favicon.png" alt="Alvorecer" width="72" height="72" style="margin-bottom: 20px;">
+    <h2 style="color: #333; margin: 0;">Alvorecer</h2>
+    <p style="color: #666; margin: 10px 0;">Carregando Aplicativo Bíblico...</p>
+    <div style="width: 50px; height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin: 20px 0;">
+      <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #4CAF50, #45a049); animation: loading 2s infinite;"></div>
+    </div>
+    <div id="loading-error" style="color: #f44336; margin-top: 20px; display: none; text-align: center; max-width: 400px;"></div>
+  </div>
+
+  <style>
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  </style>
+
+  <script>
+    window.addEventListener('load', function(ev) {
+      console.log('🚀 Página totalmente carregada, inicializando Flutter...');
+      
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          console.log('🔧 Flutter engine inicializado');
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            console.log('📱 Flutter app inicializando');
+            // Oculta a tela de loading
+            document.getElementById('loading').style.display = 'none';
+            appRunner.runApp();
+            console.log('✅ Flutter app iniciado com sucesso!');
+          }).catch(function(error) {
+            console.error('❌ Erro ao inicializar Flutter engine:', error);
+            document.getElementById('loading-error').innerHTML = 
+              '<strong>Erro ao inicializar o aplicativo:</strong><br>' + 
+              error.message + '<br><br>' +
+              '<small>Verifique o console do navegador para mais detalhes.</small>';
+            document.getElementById('loading-error').style.display = 'block';
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

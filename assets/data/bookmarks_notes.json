@@ -1,0 +1,119 @@
+{
+  "bookmarks": [
+    {
+      "id": "bm1",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "João",
+      "capitulo": 3,
+      "versiculo": 16,
+      "data_criacao": "2025-07-26T15:30:00",
+      "cor": "#FFD700",
+      "categoria": "Promessas"
+    },
+    {
+      "id": "bm2",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "Salmos",
+      "capitulo": 23,
+      "versiculo": 1,
+      "data_criacao": "2025-07-25T12:15:00",
+      "cor": "#4CAF50",
+      "categoria": "Conforto"
+    },
+    {
+      "id": "bm3",
+      "user_id": "user123",
+      "versao": "nvi",
+      "livro": "Romanos",
+      "capitulo": 8,
+      "versiculo": 28,
+      "data_criacao": "2025-07-24T09:45:00",
+      "cor": "#2196F3",
+      "categoria": "Fé"
+    }
+  ],
+  "notes": [
+    {
+      "id": "nt1",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "Gênesis",
+      "capitulo": 1,
+      "versiculo": 1,
+      "texto": "Este versículo marca o início de tudo na Bíblia. É o fundamento da doutrina da criação.",
+      "data_criacao": "2025-07-25T10:15:00",
+      "data_modificacao": "2025-07-26T08:30:00"
+    },
+    {
+      "id": "nt2",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "João",
+      "capitulo": 3,
+      "versiculo": 16,
+      "texto": "Este é considerado o 'evangelho em miniatura' porque resume toda a mensagem da salvação.",
+      "data_criacao": "2025-07-23T14:20:00",
+      "data_modificacao": "2025-07-23T14:20:00"
+    }
+  ],
+  "highlights": [
+    {
+      "id": "hl1",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "Salmos",
+      "capitulo": 23,
+      "versiculo": 1,
+      "cor": "#90EE90",
+      "data_criacao": "2025-07-24T14:20:00"
+    },
+    {
+      "id": "hl2",
+      "user_id": "user123",
+      "versao": "arc",
+      "livro": "Isaías",
+      "capitulo": 40,
+      "versiculo": 31,
+      "cor": "#FFA07A",
+      "data_criacao": "2025-07-22T16:45:00"
+    }
+  ],
+  "categorias": [
+    {
+      "id": "cat1",
+      "nome": "Promessas",
+      "cor": "#FFD700",
+      "ordem": 1
+    },
+    {
+      "id": "cat2",
+      "nome": "Conforto",
+      "cor": "#4CAF50",
+      "ordem": 2
+    },
+    {
+      "id": "cat3",
+      "nome": "Fé",
+      "cor": "#2196F3",
+      "ordem": 3
+    },
+    {
+      "id": "cat4",
+      "nome": "Oração",
+      "cor": "#9C27B0",
+      "ordem": 4
+    },
+    {
+      "id": "cat5",
+      "nome": "Sabedoria",
+      "cor": "#FF5722",
+      "ordem": 5
+    }
+  ],
+  "meta": {
+    "ultima_sincronizacao": "2025-07-26T15:40:00",
+    "versao_dados": "1.0.0"
+  }
+}
