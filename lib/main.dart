@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
+import 'firebase_options.dart';
+import 'services/auth_service.dart';
+import 'theme/alvorecer_theme.dart';
+
+// Telas
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/reset_password_screen.dart';
 import 'screens/bible_screen.dart';
-import 'services/auth_service.dart';
-import 'theme/alvorecer_theme.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializa Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const AlvorecerApp());
 }
 
@@ -25,6 +30,7 @@ class AlvorecerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Alvorecer',
+      debugShowCheckedModeBanner: false,
       theme: AlvorecerTheme.lightTheme,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -69,13 +75,13 @@ class _SplashScreenState extends State<SplashScreen> {
       final user = await authService.getCurrentUser();
       final isLoggedIn = user != null;
 
-      if (mounted) {
-        Navigator.pushReplacementNamed(
-          context,
-          isLoggedIn ? '/bible' : '/login',
-        );
-      }
-    } catch (e) {
+      if (!mounted) return;
+
+      Navigator.pushReplacementNamed(
+        context,
+        isLoggedIn ? '/bible' : '/login',
+      );
+    } catch (_) {
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/login');
       }
@@ -90,6 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Confirme que o logo existe em assets/images/
             Image.asset(
               'assets/images/alvorecer_logo.png',
               height: 120,
