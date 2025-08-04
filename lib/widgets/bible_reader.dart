@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/bible_service.dart';
 import '../models/book.dart';
 import '../models/bible_verse.dart';
+import '../services/bible_service.dart';
 
 class BibleReader extends StatefulWidget {
   const BibleReader({Key? key}) : super(key: key);
@@ -11,164 +11,108 @@ class BibleReader extends StatefulWidget {
 }
 
 class _BibleReaderState extends State<BibleReader> {
-  final BibleService _bibleService = BibleService();
-
   List<Book> _books = [];
-  List<int> _chapters = [];
-  List<BibleVerse> _verses = [];
-
   Book? _selectedBook;
-  int? _selectedChapter;
-
-  bool _loading = true;
+  int _selectedChapter = 1;
 
   @override
   void initState() {
     super.initState();
-    _loadBooks();
+    _loadBible();
   }
 
-  Future<void> _loadBooks() async {
-    setState(() => _loading = true);
-    final books = await _bibleService.getBooks();
+  /// Carrega a Bíblia do JSON
+  Future<void> _loadBible() async {
+    final books = await BibleService().loadBooks();
+    if (!mounted) return;
     setState(() {
       _books = books;
-      _loading = false;
+      _selectedBook = books.isNotEmpty ? books.first : null;
+      _selectedChapter = 1;
     });
-  }
-
-  Future<void> _loadChapters(Book book) async {
-    setState(() {
-      _selectedBook = book;
-      _selectedChapter = null;
-      _chapters = [];
-      _verses = [];
-      _loading = true;
-    });
-
-    final chapters = await _bibleService.getChapters(book.name);
-    setState(() {
-      _chapters = chapters;
-      _loading = false;
-    });
-  }
-
-  Future<void> _loadVerses(int chapter) async {
-    setState(() {
-      _selectedChapter = chapter;
-      _verses = [];
-      _loading = true;
-    });
-
-    final verses = await _bibleService.getVerses(_selectedBook!.name, chapter);
-    setState(() {
-      _verses = verses;
-      _loading = false;
-    });
-  }
-
-  void _goBack() {
-    if (_selectedChapter != null) {
-      // Volta para capítulos
-      setState(() => _selectedChapter = null);
-    } else if (_selectedBook != null) {
-      // Volta para livros
-      setState(() => _selectedBook = null);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _selectedBook == null
-              ? _buildBookList()
-              : _selectedChapter == null
-                  ? _buildChapterList()
-                  : _buildVerseList(),
-    );
-  }
+    if (_selectedBook == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  Widget _buildBookList() {
-    return ListView.builder(
-      key: const ValueKey('books'),
-      itemCount: _books.length,
-      itemBuilder: (context, index) {
-        final book = _books[index];
-        return ListTile(
-          title: Text(book.name),
-          trailing: const Icon(Icons.arrow_forward_ios),
-          onTap: () => _loadChapters(book),
-        );
-      },
-    );
-  }
+    // Filtra os versículos do capítulo selecionado
+    final verses = _selectedBook!.verses
+        .where((v) => v.chapter == _selectedChapter)
+        .toList();
 
-  Widget _buildChapterList() {
     return Column(
-      key: const ValueKey('chapters'),
       children: [
-        _buildBackButton(),
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(12),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: _chapters.length,
-            itemBuilder: (context, index) {
-              final chapter = _chapters[index];
-              return ElevatedButton(
-                onPressed: () => _loadVerses(chapter),
-                child: Text('$chapter'),
-              );
+        // Dropdown para escolher o livro
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DropdownButton<Book>(
+            value: _selectedBook,
+            isExpanded: true,
+            onChanged: (book) {
+              setState(() {
+                _selectedBook = book;
+                _selectedChapter = 1;
+              });
             },
+            items: _books.map((book) {
+              return DropdownMenuItem<Book>(
+                value: book,
+                child: Text(book.name),
+              );
+            }).toList(),
           ),
         ),
-      ],
-    );
-  }
 
-  Widget _buildVerseList() {
-    return Column(
-      key: const ValueKey('verses'),
-      children: [
-        _buildBackButton(),
+        // Botões de capítulos
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(_selectedBook!.chapters, (index) {
+              final chapter = index + 1;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _selectedChapter == chapter
+                        ? Colors.blue
+                        : Colors.grey.shade300,
+                    foregroundColor:
+                        _selectedChapter == chapter ? Colors.white : Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedChapter = chapter;
+                    });
+                  },
+                  child: Text('$chapter'),
+                ),
+              );
+            }),
+          ),
+        ),
+
+        const Divider(),
+
+        // Lista de versículos
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: _verses.length,
+            itemCount: verses.length,
             itemBuilder: (context, index) {
-              final verse = _verses[index];
+              final verse = verses[index];
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                 child: Text(
-                  '${verse.number}. ${verse.text}',
-                  style: const TextStyle(fontSize: 16, height: 1.5),
+                  '${verse.verse}. ${verse.text}',
+                  style: const TextStyle(fontSize: 16),
                 ),
               );
             },
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildBackButton() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ElevatedButton.icon(
-          onPressed: _goBack,
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('Voltar'),
-        ),
-      ),
     );
   }
 }

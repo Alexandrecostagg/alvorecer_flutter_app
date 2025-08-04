@@ -28,7 +28,7 @@ dependencies:
 
   # Estado e formulários
   provider: ^6.1.2
-  intl: ^0.19.0
+  intl: ^0.18.1
   shared_preferences: ^2.2.3
 
   # Rotas opcionais
@@ -50,4 +50,7 @@ flutter:
 
   assets:
     - assets/images/
+    # Inclui explicitamente a pasta da Bíblia
     - assets/data/bible/
+    # Inclui explicitamente o arquivo JSON da Bíblia (necessário para Web/Chrome)
+    - assets/data/bible/nvi_bible.json

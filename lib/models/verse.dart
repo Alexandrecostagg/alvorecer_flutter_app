@@ -1,22 +1,27 @@
-class Verse {
-  final String book;
-  final int chapter;
-  final int number;
-  final String text;
+class BibleVerse {
+  final int chapter;   // Capítulo
+  final int number;    // Número do versículo
+  final String text;   // Texto do versículo
 
-  Verse({
-    required this.book,
+  BibleVerse({
     required this.chapter,
     required this.number,
     required this.text,
   });
 
-  factory Verse.fromJson(Map<String, dynamic> json, String book, int chapter) {
-    return Verse(
-      book: book,
-      chapter: chapter,
-      number: json['number'],
-      text: json['text'],
+  factory BibleVerse.fromJson(Map<String, dynamic> json) {
+    return BibleVerse(
+      chapter: json['chapter'] ?? 0,
+      number: json['number'] ?? 0,
+      text: json['text'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'chapter': chapter,
+      'number': number,
+      'text': text,
+    };
   }
 }

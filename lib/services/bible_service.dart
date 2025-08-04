@@ -1,72 +1,51 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'package:alvorecer_flutter_app/models/book.dart';
-import 'package:alvorecer_flutter_app/models/bible_verse.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import '../models/book.dart';
+import '../models/bible_verse.dart';
 
 class BibleService {
-  static Map<String, dynamic>? _bibleData;
+  static final BibleService _instance = BibleService._internal();
+  factory BibleService() => _instance;
+  BibleService._internal();
 
-  /// Carrega o JSON uma vez na memória
-  Future<void> _loadBibleData() async {
-    if (_bibleData != null) return;
-    final jsonString =
+  List<Book> _books = [];
+
+  /// Carrega a Bíblia NVI do arquivo JSON localizado em assets/data/bible/nvi_bible.json
+  Future<void> loadBible() async {
+    if (_books.isNotEmpty) return; // já carregado
+
+    final String jsonString =
         await rootBundle.loadString('assets/data/bible/nvi_bible.json');
-    _bibleData = jsonDecode(jsonString);
+
+    final List<dynamic> jsonData = jsonDecode(jsonString);
+
+    _books = jsonData.map((bookJson) => Book.fromJson(bookJson)).toList();
   }
 
-  /// Retorna lista de livros da Bíblia
-  Future<List<Book>> getBooks() async {
-    await _loadBibleData();
+  /// Retorna todos os livros
+  List<Book> getAllBooks() => _books;
 
-    final booksJson = _bibleData?['books'] as List<dynamic>;
-    return booksJson.map((b) {
-      return Book(
-        name: b['name'],
-        abbreviation: b['abbrev'] ?? '',
-        testament: b['testament'] ?? '',
-        chapters: (b['chapters'] as List).length,
+  /// Retorna um livro pelo nome
+  Book? getBookByName(String name) {
+    try {
+      return _books.firstWhere(
+        (b) => b.name.toLowerCase() == name.toLowerCase(),
       );
-    }).toList();
-  }
-
-  /// Retorna lista de capítulos (1..N) de um livro
-  Future<List<int>> getChapters(String bookName) async {
-    await _loadBibleData();
-
-    final booksJson = _bibleData?['books'] as List<dynamic>;
-    final book = booksJson.firstWhere(
-      (b) => b['name'] == bookName,
-      orElse: () => throw Exception('Livro não encontrado: $bookName'),
-    );
-
-    final chapters = (book['chapters'] as List);
-    return List.generate(chapters.length, (i) => i + 1);
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Retorna todos os versículos de um capítulo específico
-  Future<List<BibleVerse>> getVerses(String bookName, int chapter) async {
-    await _loadBibleData();
+  List<BibleVerse> getChapter(String bookName, int chapter) {
+    final book = getBookByName(bookName);
+    if (book == null) return [];
+    return book.verses.where((v) => v.chapter == chapter).toList();
+  }
 
-    final booksJson = _bibleData?['books'] as List<dynamic>;
-    final book = booksJson.firstWhere(
-      (b) => b['name'] == bookName,
-      orElse: () => throw Exception('Livro não encontrado: $bookName'),
-    );
-
-    final chapters = (book['chapters'] as List);
-    if (chapter < 1 || chapter > chapters.length) {
-      throw Exception('Capítulo inválido: $chapter');
-    }
-
-    final versesJson = chapters[chapter - 1] as List;
-    return List.generate(
-      versesJson.length,
-      (index) => BibleVerse(
-        book: bookName,
-        chapter: chapter,
-        verse: index + 1,
-        text: versesJson[index],
-      ),
-    );
+  /// Retorna um versículo específico
+  BibleVerse? getVerse(String bookName, int chapter, int verseNumber) {
+    return getChapter(bookName, chapter)
+        .firstWhere((v) => v.number == verseNumber, orElse: () => BibleVerse(chapter: 0, number: 0, text: ''));
   }
 }
