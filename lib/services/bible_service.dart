@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../models/book.dart';
-import '../models/bible_verse.dart';
+import 'package:alvorecer_flutter_app/models/book.dart';
+import 'package:alvorecer_flutter_app/models/bible_verse.dart';
 
 class BibleService {
   static Map<String, dynamic>? _bibleData;
